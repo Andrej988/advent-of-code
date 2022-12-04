@@ -2,11 +2,9 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Stream;
 
 /* --- Day 1: Calorie Counting ---
 Santa's reindeer typically eat regular reindeer food, but they need a lot of magical energy to deliver presents on Christmas. For that, their favorite snack is a special type of star fruit that only grows deep in the jungle. The Elves have brought you on their annual expedition to the grove where the fruit grows.
@@ -46,10 +44,22 @@ In case the Elves get hungry and need extra snacks, they need to know which Elf 
 
 Find the Elf carrying the most Calories. How many total Calories is that Elf carrying?
 
+--- Part Two ---
+By the time you calculate the answer to the Elves' question, they've already realized that the Elf carrying the most Calories of food might eventually run out of snacks.
+
+To avoid this unacceptable situation, the Elves would instead like to know the total Calories carried by the top three Elves carrying the most Calories. That way, even if one of those Elves runs out of snacks, they still have two backups.
+
+In the example above, the top three Elves are the fourth Elf (with 24000 Calories), then the third Elf (with 11000 Calories), then the fifth Elf (with 10000 Calories). The sum of the Calories carried by these three elves is 45000.
+
+Find the top three Elves carrying the most Calories. How many Calories are those Elves carrying in total?
+
 */
-public class Main {
-    private static final String REGEX_DIGITS_ONLY = "\\d+";
-    public static void main(String[] args) {
+public class Challenge2 {
+    private static final String REGEX_ONLY_DIGITS = "\\d+";
+
+    public static void challenge2() {
+        BufferedReader reader;
+
         List<Integer> calorieCount = new ArrayList<>();
         int elfIdx = 0;
         Integer elfCaloriesSum = 0;
@@ -60,7 +70,7 @@ public class Main {
         try (BufferedReader br = new BufferedReader(new FileReader("input.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
-                if (line.matches(REGEX_DIGITS_ONLY)) {
+                if (line.matches(REGEX_ONLY_DIGITS)) {
                     elfCaloriesSum += Integer.parseInt(line);
 
                 } else if(line.trim().isEmpty()) {
@@ -81,5 +91,12 @@ public class Main {
 
         System.out.println("Elf with most calories: " + (elfWithMostCaloriesIdx + 1));
         System.out.println("Max calories: " + maxCalories);
+
+        int sum = calorieCount
+                .stream()
+                .sorted(Comparator.reverseOrder())
+                .limit(3)
+                .reduce(0, (subtotal, element) -> subtotal + element);
+        System.out.println("Sum of top three: " + sum);
     }
 }
