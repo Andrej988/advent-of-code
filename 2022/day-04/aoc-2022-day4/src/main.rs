@@ -1,10 +1,9 @@
-mod first_challenge;
-mod second_challenge;
+mod challenges;
 
 fn main() {
     println!("First challenge: ");
-    first_challenge::first_challenge();
+    challenges::first_challenge();
     println!("-------------------");
     println!("Second challenge: ");
-    second_challenge::second_challenge();
+    challenges::second_challenge();
 }

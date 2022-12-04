@@ -39,19 +39,29 @@ This example list uses single-digit section IDs to make it easier to draw; your 
 Some of the pairs have noticed that one of their assignments fully contains the other. For example, 2-8 fully contains 3-7, and 6-6 is fully contained by 4-6. In pairs where one assignment fully contains the other, one Elf in the pair would be exclusively cleaning sections their partner will already be cleaning, so these seem like the most in need of reconsideration. In this example, there are 2 such pairs.
 
 In how many assignment pairs does one range fully contain the other?
+
+--- Part Two ---
+It seems like there is still quite a bit of duplicate work planned. Instead, the Elves would like to know the number of pairs that overlap at all.
+
+In the above example, the first two pairs (2-4,6-8 and 2-3,4-5) don't overlap, while the remaining four pairs (5-7,7-9, 2-8,3-7, 6-6,4-6, and 2-6,4-8) do overlap:
+
+5-7,7-9 overlaps in a single section, 7.
+2-8,3-7 overlaps all of the sections 3 through 7.
+6-6,4-6 overlaps in a single section, 6.
+2-6,4-8 overlaps in sections 4, 5, and 6.
+So, in this example, the number of overlapping assignment pairs is 4.
+
+In how many assignment pairs do the ranges overlap?
 */
-use std::fs::File;
-use std::io::{self, BufRead};
-use std::path::Path;
 
+use crate::challenges::read_lines::read_lines;
 
-
-pub fn first_challenge() {
+pub fn second_challenge() {
     let mut total: u16 = 0;
     if let Ok(lines) = read_lines("input.txt") {
         for line in lines {
             if let Ok(line_text) = line {
-                if does_one_range_contains_other(&line_text) == true {
+                if is_overlap(&line_text) == true {
                     total+=1;
                 };
             }
@@ -60,20 +70,12 @@ pub fn first_challenge() {
     println!("Total items: {}",total);
 }
 
-fn read_lines<P>(filename: P) -> std::result::Result<std::io::Lines<std::io::BufReader<std::fs::File>>, std::io::Error>
-where P: AsRef<Path>, {
-    let file = File::open(filename);
-    match file {
-        Ok(file) => Ok(io::BufReader::new(file).lines()),
-        Err(error) => panic!("Problem opening the file: {:?}", error),
-    }
-}
+fn is_overlap(text: &String) -> bool {    
+    let (first_part, second_part) = split_to_parts(&text);
+    let (first_start, first_end) = split_to_start_and_end(&first_part);
+    let (second_start, second_end) = split_to_start_and_end(&second_part);
+    return !does_not_overlap(&first_start, &first_end, &second_start, &second_end);
 
-fn does_one_range_contains_other(text: &String) -> bool {    
-    let (first_part, second_part) = split_to_parts(text);
-    let (first_start, first_end) = split_to_start_and_end(first_part);
-    let (second_start, second_end) = split_to_start_and_end(second_part);
-    return first_contains_second(&first_start, &first_end, &second_start, &second_end) || second_contains_first(&first_start, &first_end, &second_start, &second_end);
 }
 
 fn split_to_parts(text: &String) -> (&str, &str) {
@@ -90,10 +92,6 @@ fn split_to_start_and_end(text: &str) -> (u16, u16) {
     return (start, end);
 }
 
-fn first_contains_second(first_start: &u16, first_end: &u16, second_start: &u16, second_end: &u16) -> bool {
-    return first_start <= second_start && first_end >= second_end;
-}
-
-fn second_contains_first(first_start: &u16, first_end: &u16, second_start: &u16, second_end: &u16) -> bool {
-    return second_start <= first_start && second_end >= first_end;
+fn does_not_overlap(first_start: &u16, first_end: &u16, second_start: &u16, second_end: &u16) -> bool {
+    return first_start > second_end || first_end < second_start;
 }
