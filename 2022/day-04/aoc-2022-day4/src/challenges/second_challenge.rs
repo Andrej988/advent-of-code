@@ -61,7 +61,7 @@ pub fn second_challenge() {
     if let Ok(lines) = read_lines("input.txt") {
         for line in lines {
             if let Ok(line_text) = line {
-                if is_overlap(&line_text) == true {
+                if is_overlap(&line_text) {
                     total += 1;
                 };
             }

@@ -48,7 +48,7 @@ pub fn first_challenge() {
     if let Ok(lines) = read_lines("input.txt") {
         for line in lines {
             if let Ok(line_text) = line {
-                if does_one_range_contains_other(&line_text) == true {
+                if does_one_range_contains_other(&line_text) {
                     total += 1;
                 };
             }
