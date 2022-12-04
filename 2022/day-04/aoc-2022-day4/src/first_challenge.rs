@@ -73,7 +73,7 @@ fn does_one_range_contains_other(text: &String) -> bool {
     let (first_part, second_part) = split_to_parts(text);
     let (first_start, first_end) = split_to_start_and_end(first_part);
     let (second_start, second_end) = split_to_start_and_end(second_part);
-    return first_contains_second(first_start, first_end, second_start, second_end) || second_contains_first(first_start, first_end, second_start, second_end);
+    return first_contains_second(&first_start, &first_end, &second_start, &second_end) || second_contains_first(&first_start, &first_end, &second_start, &second_end);
 }
 
 fn split_to_parts(text: &String) -> (&str, &str) {
@@ -90,10 +90,10 @@ fn split_to_start_and_end(text: &str) -> (u16, u16) {
     return (start, end);
 }
 
-fn first_contains_second(first_start: u16, first_end: u16, second_start: u16, second_end: u16) -> bool {
+fn first_contains_second(first_start: &u16, first_end: &u16, second_start: &u16, second_end: &u16) -> bool {
     return first_start <= second_start && first_end >= second_end;
 }
 
-fn second_contains_first(first_start: u16, first_end: u16, second_start: u16, second_end: u16) -> bool {
+fn second_contains_first(first_start: &u16, first_end: &u16, second_start: &u16, second_end: &u16) -> bool {
     return second_start <= first_start && second_end >= first_end;
 }
