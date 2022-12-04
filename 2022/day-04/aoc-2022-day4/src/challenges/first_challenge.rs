@@ -66,9 +66,7 @@ fn does_one_range_contains_other(text: &String) -> bool {
 
 fn split_to_parts(text: &String) -> (&str, &str) {
     let tokens: Vec<&str> = text.split(",").collect();
-    let first_part = tokens[0];
-    let second_part = tokens[1];
-    return (first_part, second_part);
+    return (tokens[0], tokens[1]);
 }
 
 fn split_to_start_and_end(text: &str) -> (u16, u16) {
