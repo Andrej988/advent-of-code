@@ -5,4 +5,8 @@ fn main() {
 
     println!("First challenge: ");
     challenges::first_challenge(filename);
+
+    println!("-----------------");
+    println!("Second challenge: ");
+    challenges::second_challenge(filename);
 }

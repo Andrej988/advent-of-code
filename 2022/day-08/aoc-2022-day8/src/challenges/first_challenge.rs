@@ -27,7 +27,8 @@ With 16 trees visible on the edge and another 5 visible in the interior, a total
 
 Consider your map; how many trees are visible from outside the grid? */
 
-use super::read_lines::read_lines;
+use super::load_data::build_two_dimensional_tree_vector;
+use super::load_data::print_tree_vector;
 
 pub fn solve_challenge(filename: &str) {
     let trees = build_two_dimensional_tree_vector(filename);
@@ -35,8 +36,8 @@ pub fn solve_challenge(filename: &str) {
 
     let mut total_visible_trees: u32 = 0;
 
-    for i in 0 .. trees.len() {
-        for j in 0 .. trees[i].len() {
+    for i in 0..trees.len() {
+        for j in 0..trees[i].len() {
             if determine_if_tree_is_visible(&trees, i, j) {
                 total_visible_trees += 1;
             }
@@ -46,52 +47,18 @@ pub fn solve_challenge(filename: &str) {
     println!("Total visible trees: {}", total_visible_trees);
 }
 
-fn print_tree_vector(trees: &Vec<Vec<u32>>) {
-    for tree_row in trees.iter() {
-        for tree in tree_row {
-            print!(" {} ", tree);
-        }
-        print!("\n");
-    }
-}
-
-fn build_two_dimensional_tree_vector(filename: &str) -> Vec<Vec<u32>> {
-    let mut trees: Vec<Vec<u32>> = Vec::new();
-    
-    if let Ok(lines) = read_lines(filename) {
-        for line in lines.flatten() {
-            if !line.is_empty() {
-                process_line(&line, &mut trees);
-            }
-        }
-    }
-    return trees;
-}
-
-fn process_line(line_text: &str, trees: &mut Vec<Vec<u32>>) {
-    const RADIX: u32 = 10;
-    let mut new_tree_row: Vec<u32> = Vec::new();
-
-    let digits: Vec<char> = line_text.chars().collect();
-    for char in digits {
-        let tree_height: u32 = char.to_digit(RADIX).unwrap();
-        new_tree_row.push(tree_height);
-    }
-
-    trees.push(new_tree_row);
-}
-
 fn determine_if_tree_is_visible(trees: &Vec<Vec<u32>>, row: usize, column: usize) -> bool {
-    if row == 0 || row == trees.len() -1 || column == 0 || column == trees[row].len() -1 {
-        
-        return true;
+    if row == 0 || row == trees.len() - 1 || column == 0 || column == trees[row].len() - 1 {
+        true
     } else {
-        return is_visible_from_left(trees, row, column) || is_visible_from_right(trees, row, column) || 
-            is_visible_from_top(trees, row, column) || is_visible_from_bottom(trees, row, column);
+        is_visible_from_left(trees, row, column)
+        || is_visible_from_right(trees, row, column)
+        || is_visible_from_top(trees, row, column)
+        || is_visible_from_bottom(trees, row, column)
     }
 }
 
-fn is_visible_from_left(trees: &Vec<Vec<u32>>, row: usize, column: usize) -> bool {
+fn is_visible_from_left(trees: &[Vec<u32>], row: usize, column: usize) -> bool {
     let mut idx: usize = column;
 
     while idx > 0 {
@@ -100,10 +67,10 @@ fn is_visible_from_left(trees: &Vec<Vec<u32>>, row: usize, column: usize) -> boo
             return false;
         }
     }
-    return true;
+    true
 }
 
-fn is_visible_from_right(trees: &Vec<Vec<u32>>, row: usize, column: usize) -> bool {
+fn is_visible_from_right(trees: &[Vec<u32>], row: usize, column: usize) -> bool {
     let mut idx: usize = column + 1;
 
     while idx < trees[row].len() {
@@ -113,10 +80,10 @@ fn is_visible_from_right(trees: &Vec<Vec<u32>>, row: usize, column: usize) -> bo
 
         idx += 1;
     }
-    return true;
+    true
 }
 
-fn is_visible_from_top(trees: &Vec<Vec<u32>>, row: usize, column: usize) -> bool {
+fn is_visible_from_top(trees: &[Vec<u32>], row: usize, column: usize) -> bool {
     let mut idx: usize = row;
 
     while idx > 0 {
@@ -125,10 +92,10 @@ fn is_visible_from_top(trees: &Vec<Vec<u32>>, row: usize, column: usize) -> bool
             return false;
         }
     }
-    return true;
+    true
 }
 
-fn is_visible_from_bottom(trees: &Vec<Vec<u32>>, row: usize, column: usize) -> bool {
+fn is_visible_from_bottom(trees: &[Vec<u32>], row: usize, column: usize) -> bool {
     let mut idx: usize = row + 1;
 
     while idx < trees[column].len() {
@@ -138,5 +105,5 @@ fn is_visible_from_bottom(trees: &Vec<Vec<u32>>, row: usize, column: usize) -> b
 
         idx += 1;
     }
-    return true;
+    true
 }
