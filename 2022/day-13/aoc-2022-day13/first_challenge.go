@@ -216,37 +216,43 @@ func compare(left []any, right []any) int {
 
 		leftToken := left[i]
 		rightToken := right[i]
-		typeLeft := reflect.TypeOf(leftToken)
-		typeRight := reflect.TypeOf(rightToken)
 		
-
-		if typeLeft == typeRight {
-			if typeLeft.Name() == NUMERIC_TYPE {
-				if leftToken.(float64) < rightToken.(float64) {
-					return 1
-				} else if leftToken.(float64) > rightToken.(float64) {
-					return -1
-				}
-			} else {
-				result = compare(leftToken.([]any), rightToken.([]any))
-				if result != 0 {
-					return result
-				}
-			}
-		} else {
-			if typeLeft.Name() == NUMERIC_TYPE {
-				result = compare([]any{leftToken}, rightToken.([]any))
-			} else if typeRight.Name() == NUMERIC_TYPE {
-				result = compare(leftToken.([]any), []any{rightToken})
+		if isInteger(leftToken) && isInteger(rightToken) {
+			if leftToken.(float64) < rightToken.(float64) {
+				return 1
+			} else if leftToken.(float64) > rightToken.(float64) {
+				return -1
 			}
 
+		} else if isList(leftToken) && isList(rightToken) {
+			result = compare(leftToken.([]any), rightToken.([]any))
 			if result != 0 {
 				return result
 			}
+		
+		} else if isInteger(leftToken) && isList(rightToken) {
+			result = compare([]any{leftToken}, rightToken.([]any))
+
+		} else if isList(leftToken) && isInteger(rightToken) {
+			result = compare(leftToken.([]any), []any{rightToken})
 		}
+			
+		if result != 0 {
+			return result
+		}
+		
 	}
 	if len(left) < len(right) {
 		return 1
 	}
 	return 0
+}
+
+func isInteger(token any) bool {
+	tokenType := reflect.TypeOf(token)
+	return len(tokenType.Name()) > 0 && tokenType.Name() == NUMERIC_TYPE
+}
+
+func isList(token any) bool {
+	return !isInteger(token)
 }
