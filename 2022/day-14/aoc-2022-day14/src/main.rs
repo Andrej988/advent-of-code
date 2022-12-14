@@ -4,9 +4,16 @@ mod challenges;
 
 fn main() {
     const FILENAME: &str = "input.txt";
-    let mut map = challenges::build_map_from_file(FILENAME);
-    //print_map(&map);
 
     println!("First challenge: ");
+    let mut map = challenges::build_map_from_file(FILENAME);
+    //print_map(&map);
     challenges::solve_first_challenge(&mut map);
+
+    println!("----------------------");
+
+    println!("Second challenge: ");
+    map = challenges::build_map_from_file(FILENAME);
+    //print_map(&map);
+    challenges::solve_second_challenge(&mut map);
 }

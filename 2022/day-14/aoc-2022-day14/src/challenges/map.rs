@@ -50,3 +50,19 @@ pub fn print(map: &HashMap<Coordinates, char>) {
         println!("Key {} Value: {}", key, value);
     }
 }
+
+pub fn find_biggest_x(map: &HashMap<Coordinates, char>) -> usize {
+    map.iter()
+        .filter(|entry| *entry.1 == '#')
+        .map(|entry| entry.0.x)
+        .max()
+        .unwrap()
+}
+
+pub fn is_coordinate_reachable(coords: &Coordinates, map: &HashMap<Coordinates, char>) -> bool {
+    !map.contains_key(coords)
+}
+
+pub fn count_chars(map: &HashMap<Coordinates, char>, c: char) -> usize {
+    map.iter().filter(|entry| *entry.1 == c).count()
+}

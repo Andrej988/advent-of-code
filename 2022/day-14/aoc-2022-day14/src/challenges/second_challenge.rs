@@ -110,7 +110,42 @@ Once all 24 units of sand shown above have come to rest, all further sand flows 
 ~..........
 ~..........
 ~..........
-Using your scan, simulate the falling sand. How many units of sand come to rest before sand starts flowing into the abyss below? */
+Using your scan, simulate the falling sand. How many units of sand come to rest before sand starts flowing into the abyss below?
+
+--- Part Two ---
+You realize you misread the scan. There isn't an endless void at the bottom of the scan - there's floor, and you're standing on it!
+
+You don't have time to scan the floor, so assume the floor is an infinite horizontal line with a y coordinate equal to two plus the highest y coordinate of any point in your scan.
+
+In the example above, the highest y coordinate of any point is 9, and so the floor is at y=11. (This is as if your scan contained one extra rock path like -infinity,11 -> infinity,11.) With the added floor, the example above now looks like this:
+
+        ...........+........
+        ....................
+        ....................
+        ....................
+        .........#...##.....
+        .........#...#......
+        .......###...#......
+        .............#......
+        .............#......
+        .....#########......
+        ....................
+<-- etc #################### etc -->
+To find somewhere safe to stand, you'll need to simulate falling sand until a unit of sand comes to rest at 500,0, blocking the source entirely and stopping the flow of sand into the cave. In the example above, the situation finally looks like this after 93 units of sand come to rest:
+
+............o............
+...........ooo...........
+..........ooooo..........
+.........ooooooo.........
+........oo#ooo##o........
+.......ooo#ooo#ooo.......
+......oo###ooo#oooo......
+.....oooo.oooo#ooooo.....
+....oooooooooo#oooooo....
+...ooo#########ooooooo...
+..ooooo.......ooooooooo..
+#########################
+Using your scan, simulate the falling sand until the source of the sand becomes blocked. How many units of sand come to rest?*/
 use std::collections::HashMap;
 
 use crate::challenges::map::{count_chars, find_biggest_x};
@@ -123,10 +158,10 @@ use super::{
 
 pub fn solve_challenge(map: &mut HashMap<Coordinates, char>) {
     let starting_point = new_coordinates(0, 500);
-    let precipe_x = find_biggest_x(map) + 1;
+    let floor = find_biggest_x(map) + 2;
 
     loop {
-        let sand_hit_precipe: bool = sandfall(&starting_point, map, &precipe_x);
+        let sand_hit_precipe: bool = sandfall(&starting_point, map, &floor);
         if sand_hit_precipe {
             break;
         }
@@ -138,15 +173,14 @@ pub fn solve_challenge(map: &mut HashMap<Coordinates, char>) {
 fn sandfall(
     starting_coords: &Coordinates,
     map: &mut HashMap<Coordinates, char>,
-    precipe_x: &usize,
+    floor_x: &usize,
 ) -> bool {
     let mut sand_coords: Coordinates = new_coordinates(starting_coords.x, starting_coords.y);
     loop {
-        if sand_hit_precipe_x(&sand_coords, precipe_x) {
-            return true;
-        }
-
-        if is_coordinate_reachable(&perform_move(&sand_coords, &Direction::Down), map) {
+        if is_on_floor(&sand_coords, floor_x) {
+            map.insert(new_coordinates(sand_coords.x, sand_coords.y), 'o');
+            break;
+        } else if is_coordinate_reachable(&perform_move(&sand_coords, &Direction::Down), map) {
             sand_coords = perform_move(&sand_coords, &Direction::Down);
         } else if is_coordinate_reachable(&perform_move(&sand_coords, &Direction::DownAndLeft), map)
         {
@@ -158,12 +192,15 @@ fn sandfall(
             sand_coords = perform_move(&sand_coords, &Direction::DownAndRight);
         } else {
             map.insert(new_coordinates(sand_coords.x, sand_coords.y), 'o');
+            if sand_coords == *starting_coords {
+                return true;
+            }
             break;
         }
     }
     false
 }
 
-fn sand_hit_precipe_x(coords: &Coordinates, precipe_x: &usize) -> bool {
-    coords.x == *precipe_x
+fn is_on_floor(coords: &Coordinates, floor_x: &usize) -> bool {
+    coords.x == (floor_x - 1)
 }
