@@ -11,4 +11,9 @@ func main() {
 	
 	fmt.Println("First challenge:")
 	solveFirstChallenge(gas)
+
+	fmt.Println("----------------")
+
+	fmt.Println("Second challenge:")
+	solveSecondChallenge(gas)
 }

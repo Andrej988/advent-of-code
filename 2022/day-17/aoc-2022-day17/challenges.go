@@ -332,44 +332,56 @@ The moment each of the next few rocks begins falling, you would see this:
 To prove to the elephants your simulation is accurate, they want to know how tall the tower will get after 2022 rocks have stopped (but before the 2023rd rock begins falling). In this example, the tower of rocks will be 3068 units tall.
 
 How many units tall will the tower of rocks be after 2022 rocks have stopped falling?
+
+--- Part Two ---
+The elephants are not impressed by your simulation. They demand to know how tall the tower will be after 1000000000000 rocks have stopped! Only then will they feel confident enough to proceed through the cave.
+
+In the example above, the tower would be 1514285714288 units tall!
+
+How tall will the tower be after 1000000000000 rocks have stopped?
 */
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
+
+type SeenDetails struct {
+	pieceNum int
+	maxHeight int
+}
 
 func solveFirstChallenge(gas Gas) {
-	numberOfMoves := 2022
+	solveChallenge(gas, 2022, false)
+}
+
+func solveSecondChallenge(gas Gas) {
+	solveChallenge(gas, 1000000000000, true)
+}
+
+func solveChallenge(gas Gas, numberOfMoves int, challenge2 bool) {
+	seen := make(map[State]SeenDetails)
+	foundCycle := false
 
 	mapOfRocks := newMapOfRocks()
+	repeatCycleAddition := 0
 
 	for i := 1; i <= numberOfMoves; i++ {
 		shape := getShape(mapOfRocks.getHeight() + 4, i)
-		//shape.print()
 		settle := false
-		
-		for {
-			
-			/*if !shape.isAllowedToMove(mapOfRocks, Down) {
-				fmt.Println("Adding rocks for:")
-				shape.print()
-				mapOfRocks.addRocks(shape)
-				break;
-			}*/
 
+		for {
 			//Perform move: Gas
 			gasDirection := gas.getNextDirection()
-			//fmt.Println("Gas direction:", gasDirection)
-			//fmt.Printf("Is allowed to move %v : %v \n", gasDirection, shape.isAllowedToMove(mapOfRocks, gasDirection))
 			if shape.isAllowedToMove(mapOfRocks, gasDirection) {
 				shape.performMove(gasDirection)
-				//shape.print()
 				if !shape.isAllowedToMove(mapOfRocks, Down) {
 					settle = true
 				}
+				//shape.print()
 			}
 
 			//Perform move: Falling down
-			//fmt.Printf("Is allowed to move %v : %v \n", Down, shape.isAllowedToMove(mapOfRocks, Down))
 			if shape.isAllowedToMove(mapOfRocks, Down) {
 				shape.performMove(Down)
 				if !shape.isAllowedToMove(mapOfRocks, Down) {
@@ -377,16 +389,26 @@ func solveFirstChallenge(gas Gas) {
 				}
 				//shape.print()
 			} else if settle {
-				//fmt.Println("Adding rocks for:")
-				//shape.print()
 				mapOfRocks.addRocks(shape)
 				break;
 			}
 		}
-		//fmt.Println()
-		
-	}
 
-	//fmt.Println("Map:", mapOfRocks)
-	fmt.Println("Height: ", mapOfRocks.getHeight())
+		if challenge2 && !foundCycle {
+			state := newState(gas.idx, shape.name, mapOfRocks.relativeStateOfHeights())
+			_, ok := seen[state]
+			if ok {
+				oldState := seen[state]
+				newState := SeenDetails{pieceNum: i, maxHeight: mapOfRocks.getHeight()}
+
+				repeat := (numberOfMoves - newState.pieceNum) / (newState.pieceNum - oldState.pieceNum)
+				i += (newState.pieceNum - oldState.pieceNum) * repeat
+				repeatCycleAddition += repeat * (newState.maxHeight - oldState.maxHeight)
+				foundCycle = true
+			}
+			seen[state] = SeenDetails{pieceNum: i, maxHeight: mapOfRocks.getHeight()}
+		}
+	}
+	
+	fmt.Println("Height: ", mapOfRocks.getHeight() + repeatCycleAddition)
 }

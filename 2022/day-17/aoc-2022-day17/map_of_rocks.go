@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 type MapOfRocks struct {
 	mapOfRocks map[Coordinates]string
 }
@@ -31,6 +29,36 @@ func (m *MapOfRocks) contains(coords Coordinates) bool {
 
 func (m *MapOfRocks) addRocks(shape Shape) {
 	for _, coords := range shape.coords {
-		m.mapOfRocks[coords] = fmt.Sprintf("S%v", shape.number)
+		m.mapOfRocks[coords] = "#"
 	}
+}
+
+func (m *MapOfRocks) maxHeights() []int {
+	max := []int{0, 0, 0, 0, 0, 0, 0}
+	for k := range m.mapOfRocks {
+		if k.X > max[k.Y] {
+			max[k.Y] = k.X
+		}
+	}
+	return max
+}
+
+func minOfMaxHeights(maxHeights []int) int {
+	result := int(^uint(0) >> 1)
+	for _, i := range maxHeights {
+		if i < result {
+			result = i
+		}
+	}
+
+	return result
+}
+
+func (m *MapOfRocks) relativeStateOfHeights() []int {
+	maxHeights := m.maxHeights()
+	min := minOfMaxHeights(maxHeights)
+	for i, v := range maxHeights {
+		maxHeights[i] = v - min
+	}
+	return maxHeights
 }
