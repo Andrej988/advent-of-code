@@ -7,4 +7,9 @@ fn main() {
 
     println!("First challenge:");
     challenges::solve_first_challenge(&cubes);
+
+    println!("-----------------");
+
+    println!("Second challenge:");
+    challenges::solve_second_challenge(&cubes);
 }

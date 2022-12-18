@@ -14,3 +14,7 @@ pub fn build_cube_map(filename: &str) -> HashMap<Coordinates, Cube> {
 pub fn solve_first_challenge(cubes: &HashMap<Coordinates, Cube>) {
     challenge::solve_first_challenge(cubes);
 }
+
+pub fn solve_second_challenge(cubes: &HashMap<Coordinates, Cube>) {
+    challenge::solve_second_challenge_waterfill(cubes);
+}
