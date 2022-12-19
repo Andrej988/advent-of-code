@@ -3,15 +3,15 @@ package main
 import "fmt"
 
 func main() {
-	filename := "input.txt"
-	lines := readInputFile(filename)
-	blueprints := parseLinesToBlueprints(lines)
-
 	fmt.Println("First challenge:")
-	solveFirstChallenge(blueprints)
+	filename1 := "input.txt"
+	blueprints1 := parseLinesToBlueprints(readInputFile(filename1))
+	solveFirstChallenge(blueprints1)
 
 	fmt.Println("----------------")
 
-	//fmt.Println("Second challenge:")
-	//solveSecondChallenge(gas)
+	fmt.Println("Second challenge:")
+	filename2 := "input2.txt"
+	blueprints2 := parseLinesToBlueprints(readInputFile(filename2))
+	solveSecondChallenge(blueprints2)
 }

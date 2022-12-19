@@ -18,6 +18,18 @@ func solveFirstChallenge(blueprints []Blueprint) {
 	fmt.Println("Quality level: ", total)
 }
 
+func solveSecondChallenge(blueprints []Blueprint) {
+	total := 1
+
+	// Could be run in parallel
+	for _, blueprint := range blueprints {
+		startingState := buildStartingState(blueprint, 32)
+		result := dfs(startingState)
+		total = total * result
+	}
+	fmt.Println("Quality level: ", total)
+}
+
 func dfs(startingState State) int {
 	bestResult := -1
 	queue := deque.NewDeque[State]()
@@ -45,7 +57,7 @@ func dfs(startingState State) int {
 		newPossibleStates = append(newPossibleStates, skipAllRobotBuildingState)
 
 		// Build Geode Robot (if possible)
-		if isPossibleToBuildRobot(state.Blueprint.GeodeRobotCost, state.Resources) {
+		if isPossibleToBuildRobot(state.Blueprint.GeodeRobotCost, state.Resources) && state.TimeLeft > 1 {
 			newPossibleStates = append(newPossibleStates, buildRobotAndReturnNewPossibleState(GeodeRobot, state))
 		}
 
@@ -78,7 +90,7 @@ func dfs(startingState State) int {
 			}
 
 			// Check if it is even possible to beat the best result so far
-			if possibleState.TimeLeft < 5 && !isPossibleToGetNewBestResult(possibleState, bestResult) {
+			if !isPossibleToGetNewBestResult(possibleState, bestResult) {
 				continue
 			}
 			queue.PushFront(possibleState)
