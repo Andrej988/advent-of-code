@@ -8,4 +8,9 @@ func main() {
 
 	fmt.Println("First challenge:")
 	solveFirstChallenge(lines)
+
+	fmt.Println("-------------------")
+
+	fmt.Println("Second challenge:")
+	solveSecondChallenge(lines)
 }
