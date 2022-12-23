@@ -11,6 +11,6 @@ fn main() {
 
     println!("-----------------");
 
-    /*println!("Second challenge:");
-    challenges::solve_second_challenge(&original_arr);*/
+    println!("Second challenge:");
+    challenges::solve_second_challenge(&coords, &instructions, &starting_coords);
 }
